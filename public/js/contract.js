@@ -216,32 +216,32 @@ const addDataToContract = async (account,message)=>{
         .send({ from:account , gas: 1000000 })
         .then(function (result) {
             console.log("Transaction Successful:", result);
-        var data = {
-            address : account,
-            data : result
-        }
-        data.data.message = message
-                    
-        fetch("/appointment", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
+            var data = {
+                address : account,
+                data : result
+            }
+            data.data.message = message
+                        
+            fetch("/appointment", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+                })
+                .then((response)=>{
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Appointment added");
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
             })
-            .then((response)=>{
-                return response.json();
-            })
-            .then(data => {
-                console.log("Appointment added");
-            })
-            .catch(error => {
-                console.error('Error:', error);
+            .catch(function (error) {
+                console.error("Transaction Failed:", error);
             });
-        })
-        .catch(function (error) {
-            console.error("Transaction Failed:", error);
-        });
 }
 
 

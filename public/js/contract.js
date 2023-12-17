@@ -211,13 +211,13 @@ const depositContract = async (account,amount,message) => {
         .on('error', console.error);
 }
 
-const addDataToContract = async (address,message)=>{
+const addDataToContract = async (account,message)=>{
     await window.contract.methods.setString(JSON.stringify(message))
-        .send({ from:address , gas: 1000000 })
+        .send({ from:account , gas: 1000000 })
         .then(function (result) {
             console.log("Transaction Successful:", result);
         var data = {
-            address : address,
+            address : account,
             data : result
         }
         data.data.message = message
@@ -245,7 +245,7 @@ const addDataToContract = async (address,message)=>{
 }
 
 
-const withdraw = async (address,amount) => {
+const withdraw = async (address,amount,account) => {
     await window.contract.methods.withdraw(address, amount).send({from: account});
     return true;
 }

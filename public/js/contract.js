@@ -217,7 +217,7 @@ const addDataToContract = async (address,message)=>{
         .then(function (result) {
             console.log("Transaction Successful:", result);
         var data = {
-            address : account,
+            address : address,
             data : result
         }
         data.data.message = message

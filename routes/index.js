@@ -23,6 +23,11 @@ router.get('/', function(req, res, next) {
   });
 });
 
+router.get('/foodcentral', function(req, res, next) {
+    console.log(process.env.FOOD_CENTRAL_API_KEY);
+    res.render('foodcentral', {page_title: "Food Data Central", api_key:process.env.FOOD_CENTRAL_API_KEY});
+});
+
 router.get('/login', function(req, res, next) {
       res.render('login', {page_title: "Login"});
 });

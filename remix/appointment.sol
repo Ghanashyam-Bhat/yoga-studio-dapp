@@ -1,24 +1,17 @@
-//SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
 
-pragma solidity >=0.8.7;
+contract AppointmentContract {
+    // Variable to store a single string
+    string public storedString;
 
-contract Transactions {
-
-    //Address --> Contract -- deposit
-    function deposit() external payable {
+    // Function to set the stored string
+    function setString(string memory _value) public {
+        storedString = _value;
     }
 
-    //Contract --> Address  -- withdrawal
-    function withdraw(address payable _to, uint _amount) external {
-        _to.transfer(_amount);
+    // Function to get the stored string
+    function getString() public view returns (string memory) {
+        return storedString;
     }
-
-    function getBalance() external view returns(uint) {
-        return address(this).balance;
-    }
-
-    function getAddress() external view returns(address) {
-        return address(this);
-    }
-
 }

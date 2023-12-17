@@ -61,13 +61,6 @@ const contracts = {
         ABI : [
             {
                 "inputs": [],
-                "name": "deposit",
-                "outputs": [],
-                "stateMutability": "payable",
-                "type": "function"
-            },
-            {
-                "inputs": [],
                 "name": "getAddress",
                 "outputs": [
                     {
@@ -93,25 +86,46 @@ const contracts = {
                 "type": "function"
             },
             {
-                "inputs": [
+                "inputs": [],
+                "name": "getString",
+                "outputs": [
                     {
-                        "internalType": "address payable",
-                        "name": "_to",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "_amount",
-                        "type": "uint256"
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
                     }
                 ],
-                "name": "withdraw",
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "string",
+                        "name": "_value",
+                        "type": "string"
+                    }
+                ],
+                "name": "setString",
                 "outputs": [],
                 "stateMutability": "nonpayable",
                 "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "storedString",
+                "outputs": [
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
             }
         ],
-        Address : "0x47faE9616aa8A9bCE77E0D31F7927fe94fC52FF6"
+        Address : "0xC031cfbE04b167e05Ec44497375789AC59A794f7"
     }
 }
 
@@ -151,7 +165,7 @@ const getContractBalance = async () => {
     return contract_balanace
 }
 
-const depositContract = async (account,amount,message=null,isPayment=true) => {
+const depositContract = async (account,amount,message) => {
     let transactionHash;
     let transactionReceipt;
     await window.contract.methods.deposit().send({
@@ -175,45 +189,59 @@ const depositContract = async (account,amount,message=null,isPayment=true) => {
                 }
             }
             data.data.message = message
-            if(!isPayment){
-                fetch("/appointment", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                    })
-                    .then((response)=>{
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log("Appointment added");
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
-            }else{
-                fetch("/enroll", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                    })
-                    .then((response)=>{
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log("Enrolled to the course");
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
-            }
+            fetch("/enroll", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+                })
+                .then((response)=>{
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Enrolled to the course");
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
         })
         .on('confirmation', function(confirmationNumber, receipt){
         })
         .on('error', console.error);
+}
+
+const addDataToContract = async (address,message)=>{
+    await window.contract.methods.setString(JSON.stringify(message))
+        .send({ from:address , gas: 1000000 })
+        .then(function (result) {
+            console.log("Transaction Successful:", result);
+        var data = {
+            address : account,
+            data : result
+        }
+        data.data.message = message
+                    
+        fetch("/appointment", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+            })
+            .then((response)=>{
+                return response.json();
+            })
+            .then(data => {
+                console.log("Appointment added");
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        })
+        .catch(function (error) {
+            console.error("Transaction Failed:", error);
+        });
 }
 
 

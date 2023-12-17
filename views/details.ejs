@@ -29,7 +29,7 @@
                                 <p class="mb10">Provide all the necessary details to book an appointment</p>
                                 <textarea name="data" class="form-control" id="details" rows="10"></textarea>
                             </div>
-                            <a href="javascript:void(0)" onclick="handleSubmit();" class="col-md-12 col-sm-12 btn btn-outline">Book and Appointment for 0.00001 ETH</a> </div>
+                            <a href="javascript:void(0)" onclick="handleSubmit();" class="col-md-12 col-sm-12 btn btn-outline">Book and Appointment</a> </div>
                         </form>
                         </div>
                     </div>
@@ -38,7 +38,6 @@
     </div>
   </div>
   <script>
-    const appointmentCost = 0.00001 * (10**18)
     function handleSubmit(){
         const date = document.getElementById("inputState").value;
         const details = document.getElementById("details").value;
@@ -64,7 +63,7 @@
                     date : date,
                     details : details
                 }
-                await depositContract(data.address,appointmentCost,message,false);
+                await addDataToContract(data.address,message);
             }else{
                 const anchor = document.createElement('a');
                 anchor.href = "/login";

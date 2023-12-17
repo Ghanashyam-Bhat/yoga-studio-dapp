@@ -14,4 +14,12 @@ contract AppointmentContract {
     function getString() public view returns (string memory) {
         return storedString;
     }
+
+    function getBalance() external view returns(uint) {
+        return address(this).balance;
+    }
+
+    function getAddress() external view returns(address) {
+        return address(this);
+    }
 }

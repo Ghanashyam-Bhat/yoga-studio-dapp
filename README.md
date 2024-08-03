@@ -1,6 +1,6 @@
 - Install metamask extension
 - Clone the project
-- Install dependencies
+- Install all dependencies
   
       npm i
       npm start

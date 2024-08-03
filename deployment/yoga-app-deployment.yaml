@@ -20,7 +20,7 @@ spec:
       - name: yoga-studio-app-container
         image: DOCKER_IMAGE
         ports:
-        - containerPort: 3001
+        - containerPort: 3000
         env:
         - name: EXAMPLE_ENV_VAR
           value: "example-value"

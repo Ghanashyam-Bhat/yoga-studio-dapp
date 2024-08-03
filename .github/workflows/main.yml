@@ -3,7 +3,7 @@ name: Deploy to ECR
 on:
  
   push:
-    branches: [ main ]
+    branches: [ ma ]
 
 env:
   ECR_REPOSITORY: rachana

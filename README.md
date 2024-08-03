@@ -1,4 +1,4 @@
-- Install metamask extension
+- Install metamask extension 
 - Clone the project
 - Install  dependencies
   

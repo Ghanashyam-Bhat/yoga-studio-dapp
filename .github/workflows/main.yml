@@ -7,7 +7,7 @@ on:
 
 env:
   ECR_REPOSITORY: rachana
-  EKS_CLUSTER_NAME: rach
+  EKS_CLUSTER_NAME: rach2
   AWS_REGION: ap-southeast-2
 
 jobs:

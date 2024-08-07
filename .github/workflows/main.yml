@@ -1,7 +1,6 @@
 name: Deploy to ECR
 
 on:
- 
   push:
     branches: [ main ]
 
@@ -11,21 +10,29 @@ env:
   AWS_REGION: ap-southeast-2
 
 jobs:
-  
   build:
-    
     name: Deployment
     runs-on: ubuntu-latest
 
     steps:
-
     - name: Set short git commit SHA
       id: commit
       uses: prompt/actions-commit-hash@v2
+      
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # Shallow clones should be disabled for better relevancy of analysis
 
-    - name: Check out code
-      uses: actions/checkout@v2
-    
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      with:
+        args: >
+          -Dsonar.qualitygate.wait=true
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -54,6 +61,6 @@ jobs:
         IMAGE_TAG: ${{ steps.commit.outputs.short }}
       run: |
         kubectl version
-        sed -i.bak "s|DOCKER_IMAGE|$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG|g" deployment/yoga-app-deployment.yaml && \
+        sed -i.bak "s|DOCKER_IMAGE|$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG|g" deployment/yoga-app-deployment.yaml
         kubectl apply -f deployment/yoga-app-deployment.yaml
         kubectl apply -f deployment/yoga-app-service.yaml

@@ -6,5 +6,3 @@
 
       npm i
       npm start
-
-  aha tamatar bade mazedaar...

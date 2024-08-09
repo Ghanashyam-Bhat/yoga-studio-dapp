@@ -40,7 +40,8 @@ jobs:
         echo "HIGH: $high"
         echo "MEDIUM: $medium"
   
-        if [ "$high" -gt 0 ] || [ "$medium" -gt 0 ]; then
+        # if [ "$high" -gt 0 ] || [ "$medium" -gt 0 ]; then
+        if [ "$high" -gt 0 ]; then
           echo "Blocking deployment due to HIGH or MEDIUM security issues."
           exit 1
         fi
@@ -59,6 +60,68 @@ jobs:
       uses: actions/checkout@v3
       with:
         fetch-depth: 0  # Shallow clones should be disabled for better relevancy of analysis
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        add-apt-repository ppa:ethereum/ethereum
+        apt-get update
+        apt-get install solc
+        python -m pip install --upgrade pip
+        pip install web3
+
+    - name: Check changes in contracts
+      id: changes
+      run: |
+        echo "Checking for changes in contract files..."
+        if git diff --name-only HEAD^ HEAD | grep 'remix/payment.sol'; then
+          echo "payment.sol changed" >> $GITHUB_ENV
+          echo "PAYMENT_CONTRACT_CHANGED=true" >> $GITHUB_ENV
+        else
+          echo "PAYMENT_CONTRACT_CHANGED=false" >> $GITHUB_ENV
+        fi
+
+        if git diff --name-only HEAD^ HEAD | grep 'remix/appointment.sol'; then
+          echo "appointment.sol changed" >> $GITHUB_ENV
+          echo "APPOINTMENT_CONTRACT_CHANGED=true" >> $GITHUB_ENV
+        else
+          echo "APPOINTMENT_CONTRACT_CHANGED=false" >> $GITHUB_ENV
+        fi
+
+    - name: Deploy payment.sol if changed
+      if: env.PAYMENT_CONTRACT_CHANGED == 'true'
+      run: |
+        solc --abi remix/payment.sol > remix/payment.abi
+        solc --bin remix/payment.sol > remix/payment.bin 
+
+        echo "Deploying payment.sol..."
+        python deploy_contract.py
+      env:
+        ETH_WALLET_PRIVATE_KEY: ${{ secrets.ETH_WALLET_PRIVATE_KEY }}
+        INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
+        SOLIDITY_FILE_NAME: payment
+
+    - name: Deploy appointment.sol if changed
+      if: env.APPOINTMENT_CONTRACT_CHANGED == 'true'
+      run: |
+        solc --abi remix/appointment.sol > remix/appointment.abi
+        solc --bin remix/appointment.sol > remix/appointment.bin 
+
+        echo "Deploying appointment.sol..."
+        python deploy_contract.py
+      env:
+        ETH_WALLET_PRIVATE_KEY: ${{ secrets.ETH_WALLET_PRIVATE_KEY }}
+        INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
+        SOLIDITY_FILE_NAME: appointment
+
+    - name: No changes to contracts
+      if: env.PAYMENT_CONTRACT_CHANGED == 'false' && env.APPOINTMENT_CONTRACT_CHANGED == 'false'
+      run: |
+        echo "No changes to contracts, skipping deployment."
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1

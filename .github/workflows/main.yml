@@ -116,6 +116,7 @@ jobs:
         ETH_WALLET_PRIVATE_KEY: ${{ secrets.ETH_WALLET_PRIVATE_KEY }}
         INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
         SOLIDITY_FILE_NAME: payment
+        GH_PAT: ${{ secrets.GH_PAT }}
 
     - name: Deploy appointment.sol if changed
       if: env.APPOINTMENT_CONTRACT_CHANGED == 'true'
@@ -133,10 +134,13 @@ jobs:
         ETH_WALLET_PRIVATE_KEY: ${{ secrets.ETH_WALLET_PRIVATE_KEY }}
         INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
         SOLIDITY_FILE_NAME: appointment
+        GH_PAT: ${{ secrets.GH_PAT }}
     
     - name: Push changes to repo
       run: |
         git push origin main
+      env:
+        GH_PAT: ${{ secrets.GH_PAT }}
 
     - name: No changes to contracts
       if: env.PAYMENT_CONTRACT_CHANGED == 'false' && env.APPOINTMENT_CONTRACT_CHANGED == 'false'

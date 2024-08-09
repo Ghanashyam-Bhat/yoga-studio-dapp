@@ -2,9 +2,9 @@ import web3
 import json
 import os
 
-ETH_WALLET_PRIVATE_KEY = os.environ("ETH_WALLET_PRIVATE_KEY")
-INFURA_API_KEY = os.environ("INFURA_API_KEY")
-SOLIDITY_FILE_NAME = os.environ("SOLIDITY_FILE_NAME")
+ETH_WALLET_PRIVATE_KEY = os.environ["ETH_WALLET_PRIVATE_KEY"]
+INFURA_API_KEY = os.environ["INFURA_API_KEY"]
+SOLIDITY_FILE_NAME = os.environ["SOLIDITY_FILE_NAME"]
 
 def deploy_contract():
     # Connect to Ethereum node

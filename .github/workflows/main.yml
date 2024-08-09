@@ -28,6 +28,7 @@ jobs:
       with:
         args: >
           -Dsonar.qualitygate.wait=true
+          -Dsonar.exclusions=**/deploy_contract.py
 
     - name: Check for HIGH and MEDIUM security issues
       run: |

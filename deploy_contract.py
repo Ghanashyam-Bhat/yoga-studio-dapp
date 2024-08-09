@@ -43,5 +43,4 @@ def deploy_contract():
     with open(f'remix/{SOLIDITY_FILE_NAME}.json', 'w') as details:
         json.dump(contract_details, details, indent=4)
 
-if __name__=="__main__":
-    deploy_contract()
+deploy_contract()

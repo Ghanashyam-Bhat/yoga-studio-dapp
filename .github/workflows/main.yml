@@ -69,9 +69,9 @@ jobs:
 
     - name: Install dependencies
       run: |
-        add-apt-repository ppa:ethereum/ethereum
-        apt-get update
-        apt-get install solc
+        sudo add-apt-repository ppa:ethereum/ethereum
+        sudo apt-get update
+        sudo apt-get install solc
         python -m pip install --upgrade pip
         pip install web3
 

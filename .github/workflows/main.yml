@@ -29,6 +29,22 @@ jobs:
         args: >
           -Dsonar.qualitygate.wait=true
 
+    - name: Check for HIGH and MEDIUM security issues
+      run: |
+        response=$(curl --location 'https://sonarcloud.io/api/issues/search?projects=sandeep-yalugar_yoga-studio-dapp' \
+          --header 'Authorization: Bearer ${{ secrets.SONAR_API_KEY }}')
+  
+        high=$(echo "$response" | jq '[.issues[].impacts[] | select(.softwareQuality == "SECURITY" and .severity == "HIGH")] | length')
+        medium=$(echo "$response" | jq '[.issues[].impacts[] | select(.softwareQuality == "SECURITY" and .severity == "MEDIUM")] | length')
+  
+        echo "HIGH: $high"
+        echo "MEDIUM: $medium"
+  
+        if [ "$high" -gt 0 ] || [ "$medium" -gt 0 ]; then
+          echo "Blocking deployment due to HIGH or MEDIUM security issues."
+          exit 1
+        fi
+
   deploy:
     name: Deployment to ECR and EKS
     runs-on: ubuntu-latest

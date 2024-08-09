@@ -4,6 +4,7 @@ import os
 
 ETH_WALLET_PRIVATE_KEY = os.environ("ETH_WALLET_PRIVATE_KEY")
 INFURA_API_KEY = os.environ("INFURA_API_KEY")
+SOLIDITY_FILE_NAME = os.environ("SOLIDITY_FILE_NAME")
 
 def deploy_contract():
     # Connect to Ethereum node
@@ -11,9 +12,9 @@ def deploy_contract():
 
     # assert True is w3.is_connected()
     # Load the contract bytecode and ABI from files
-    with open("remix/payment.bin", "r") as f:
+    with open(f"remix/{SOLIDITY_FILE_NAME}.bin", "r") as f:
         bytecode = f.readlines()[-1][:-1]
-    with open("remix/payment.abi", "r") as f:
+    with open(f"remix/{SOLIDITY_FILE_NAME}.abi", "r") as f:
         abi = f.readlines()[-1][:-1]
 
     # Deploy the contract
@@ -39,7 +40,7 @@ def deploy_contract():
         "bin" : bytecode,
         "address" : tx_receipt.contractAddress
     }
-    with open('remix/payment.json', 'w') as details:
+    with open(f'remix/{SOLIDITY_FILE_NAME}.json', 'w') as details:
         json.dump(contract_details, details, indent=4)
 
 if __name__=="__main__":

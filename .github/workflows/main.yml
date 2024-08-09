@@ -3,6 +3,13 @@ name: Deploy to ECR
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - 'remix/payment.abi'
+      - 'remix/payment.bin'
+      - 'remix/payment.json'
+      - 'remix/appointment.abi'
+      - 'remix/appointment.bin'
+      - 'remix/appointment.json'
 
 env:
   ECR_REPOSITORY: devops
@@ -74,6 +81,8 @@ jobs:
         sudo apt-get install solc
         python -m pip install --upgrade pip
         pip install web3
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
     - name: Check changes in contracts
       id: changes
@@ -99,6 +108,10 @@ jobs:
 
         echo "Deploying payment.sol..."
         python deploy_contract.py
+        git add remix/payment.json
+        git add remix/payment.abi
+        git add remix/payment.bin
+        git commit -m "payment.sol compilation"
       env:
         ETH_WALLET_PRIVATE_KEY: ${{ secrets.ETH_WALLET_PRIVATE_KEY }}
         INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
@@ -108,14 +121,22 @@ jobs:
       if: env.APPOINTMENT_CONTRACT_CHANGED == 'true'
       run: |
         solc --abi remix/appointment.sol > remix/appointment.abi
-        solc --bin remix/appointment.sol > remix/appointment.bin 
+        solc --bin remix/appointment.sol > remix/appointment.bin
 
         echo "Deploying appointment.sol..."
         python deploy_contract.py
+        git add remix/appointment.json
+        git add remix/appointment.abi
+        git add remix/appointment.bin
+        git commit -m "appointment.sol compilation"
       env:
         ETH_WALLET_PRIVATE_KEY: ${{ secrets.ETH_WALLET_PRIVATE_KEY }}
         INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
         SOLIDITY_FILE_NAME: appointment
+    
+    - name: Push changes to repo
+      run: |
+        git push origin main
 
     - name: No changes to contracts
       if: env.PAYMENT_CONTRACT_CHANGED == 'false' && env.APPOINTMENT_CONTRACT_CHANGED == 'false'

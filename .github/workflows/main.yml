@@ -21,13 +21,17 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
       - name: Install node
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
       - name : Run ES lint on nodeJs files
-        uses: actions/checkout@v4, 
         run: |
           npm install
           npx eslint utils/*.js

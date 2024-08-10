@@ -35,8 +35,7 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       with:
         args: >
-          -Dsonar.exclusions=**/deploy_contract.py
-          -Dsonar.exclusions=**/contract.js
+          -Dsonar.exclusions=**/deploy_contract.py,**/contract.js
           -Dsonar.qualitygate.wait=true
 
     - name: Check for HIGH and MEDIUM security issues

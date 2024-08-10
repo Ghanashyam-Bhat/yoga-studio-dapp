@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-
+ 
 contract AppointmentContract {
     // Variable to store a single string
     string public storedString;

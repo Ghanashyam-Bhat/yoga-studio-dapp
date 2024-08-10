@@ -43,4 +43,38 @@ def deploy_contract():
     with open(f'remix/{SOLIDITY_FILE_NAME}.json', 'w') as details:
         json.dump(contract_details, details, indent=4)
 
+def writeToContractJs(): 
+    payment_abi = None
+    payment_address = None
+    appointment_abi = None
+    appointment_address = None
+    with open(f"remix/payment.json", 'r') as file:
+        # Load the JSON data from the file
+        data = json.load(file)
+        payment_abi = data["abi"]
+        payment_address = data["address"]
+    with open(f"remix/appointment.json", 'r') as file:
+        # Load the JSON data from the file
+        data = json.load(file)
+        appointment_abi = data["abi"]
+        appointment_address = data["address"]
+
+    data = None
+    
+    with open("public/js/contract.js", 'r') as file:
+        data = file.readlines()
+        start = data.index("// AUTO-GENERATED CONTENT - START\n") + 1
+        end = data.index("// AUTO-GENERATED CONTENT - END\n")
+        newData = [
+            f"payment_abi = '{payment_abi}'\n",
+            f"payment_address = '{payment_address}'\n",
+            f"appointment_abi = '{appointment_abi}'\n",
+            f"appointment_address = '{appointment_address}'\n",
+        ]
+        data = data[:start] + newData + data[end:]
+
+    with open("public/js/contract.js", 'w') as file:
+        file.writelines(data)
+
 deploy_contract()
+writeToContractJs()

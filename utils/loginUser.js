@@ -18,7 +18,7 @@ function login(metamask_address,callback) {
       fs.writeFile(filePath, JSON.stringify(obj, null, 2), 
         'utf8', function (writeErr) {
           if (writeErr) {
-            return callback(writeErr); // Pass the write error to the callback length exceeds limit
+            return callback(writeErr); 
           }
 
           callback(null, true); 

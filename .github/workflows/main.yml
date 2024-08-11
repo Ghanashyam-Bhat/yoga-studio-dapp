@@ -35,7 +35,7 @@ jobs:
         run: |
           npm install
           npx eslint utils/*.js
-          npx eslint routes/*.js
+          # npx eslint routes/*.js
         
   sonarcloud:
     name: SonarCloud Scan

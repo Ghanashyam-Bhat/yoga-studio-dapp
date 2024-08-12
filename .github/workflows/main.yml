@@ -18,9 +18,29 @@ env:
   AWS_REGION: eu-north-1
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name : Run ES lint on nodeJs files
+        run: |
+          npm install
+          npx eslint utils/*.js
+          npx eslint routes/*.js
+        
   sonarcloud:
     name: SonarCloud Scan
     runs-on: ubuntu-latest
+    needs : lint
 
     steps:
     - name: Checkout code
@@ -36,7 +56,7 @@ jobs:
       with:
         args: >
           -Dsonar.exclusions=**/deploy_contract.py,**/contract.js
-          -Dsonar.qualitygate.wait=true
+         
 
     - name: Check for HIGH and MEDIUM security issues
       run: |

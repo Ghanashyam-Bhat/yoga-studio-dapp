@@ -74,6 +74,31 @@ jobs:
           echo "Blocking deployment due to HIGH or MEDIUM security issues."
           exit 1
         fi
+        
+        # ----
+
+        safe=0
+        unsafe=0
+        
+        while read -r hotspot; do
+            status=$(echo "$hotspot" | jq -r '.status')
+            resolution=$(echo "$hotspot" | jq -r '.resolution')
+            
+            if [ "$status" != "REVIEWED" ] || [ "$resolution" != "SAFE" ]; then
+                ((unsafe++))
+            else
+                ((safe++))
+            fi
+        done < <(curl --location 'https://sonarcloud.io/api/hotspots/search?projectKey=sandeep-yalugar_yoga-studio-dapp' \
+        --header 'Authorization;' | jq -c '.hotspots[]')
+        
+        echo "Security hotspots"
+        echo "Safe: $safe, Unsafe: $unsafe" 
+        
+        if [ "$unsafe" -gt 0 ]; then
+            echo "Blocking deployment due to unsafe security hotspots."
+            exit 1
+            fi
 
   deploy:
     name: Deployment to ECR and EKS

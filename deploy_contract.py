@@ -66,9 +66,9 @@ def writeToContractJs():
         start = data.index("// AUTO-GENERATED CONTENT - START\n") + 1
         end = data.index("// AUTO-GENERATED CONTENT - END\n")
         newData = [
-            f"payment_abi = '{payment_abi}'\n",
+            f"payment_abi = {payment_abi}\n",
             f"payment_address = '{payment_address}'\n",
-            f"appointment_abi = '{appointment_abi}'\n",
+            f"appointment_abi = {appointment_abi}\n",
             f"appointment_address = '{appointment_address}'\n",
         ]
         data = data[:start] + newData + data[end:]
